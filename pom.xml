@@ -61,7 +61,7 @@
                         <id>default-cli</id>
                         <configuration>
                             <mainClass>
-                                com.schooltracker.proyectofinal/com.schooltracker.proyectofinal.HelloApplication
+                                com.schooltracker.proyectofinal/com.schooltracker.proyectofinal.Aplicacion
                             </mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>
