@@ -2,6 +2,7 @@ package com.schooltracker.proyectofinal.View;
 
 import com.schooltracker.proyectofinal.View.Botones.BotonSimple;
 import com.schooltracker.proyectofinal.View.Botones.BotonToggle;
+import com.schooltracker.proyectofinal.View.Seleccion.SelectorCsvComboBox;
 import javafx.beans.value.ChangeListener;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -24,6 +25,8 @@ public class NavBar extends HBox {
     private final HBox actionsBox;
 
     private boolean grafoDirigido;
+
+    private final SelectorCsvComboBox selectorCsv;
 
     public NavBar(String appTitle) {
         this.setAlignment(Pos.CENTER_LEFT);
@@ -52,10 +55,12 @@ public class NavBar extends HBox {
         this.actionsBox = new HBox(10);
         this.actionsBox.setAlignment(Pos.CENTER);
 
+        this.selectorCsv = new SelectorCsvComboBox();
         this.getChildren().addAll(
                 titleLabel,
                 tipoGrafoToggle,
                 searchField,
+                selectorCsv,
                 spacer,
                 actionsBox
         );
@@ -94,5 +99,17 @@ public class NavBar extends HBox {
         this.searchField.textProperty().addListener((observable, oldValue, newValue) -> {
             searchConsumer.accept(newValue);
         });
+    }
+
+    public String getArchivoCsvSeleccionado() {
+        return this.selectorCsv.getArchivoSeleccionado();
+    }
+
+    public String getRutaCsvSeleccionado() {
+        return this.selectorCsv.getRutaRecursoSeleccionado();
+    }
+
+    public void onSeleccionCsv(javafx.event.EventHandler<javafx.event.ActionEvent> handler) {
+        this.selectorCsv.setOnSeleccionCambio(handler);
     }
 }

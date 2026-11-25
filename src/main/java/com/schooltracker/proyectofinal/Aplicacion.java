@@ -12,7 +12,7 @@ public class Aplicacion extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         MainScreen root = new MainScreen();
-        Scene scene = new Scene(root, 320, 240);
+        Scene scene = new Scene(root, 720, 480);
         stage.setTitle("Proyecto Final");
         stage.setScene(scene);
         stage.show();

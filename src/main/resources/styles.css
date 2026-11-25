@@ -103,3 +103,35 @@
     -fx-text-fill: #ffffff;
     -fx-border-color: #666666;
 }
+
+/* ComboBox de selección CSV */
+.combo-csv {
+    -fx-background-color: #333333;
+    -fx-border-color: #525252;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-cursor: hand;
+}
+
+.combo-csv:hover {
+    -fx-background-color: #454545;
+    -fx-border-color: #737373;
+}
+
+.combo-csv .list-cell {
+    -fx-background-color: #333333;
+    -fx-text-fill: #e6e6e6;
+}
+
+.combo-csv .list-cell:hover {
+    -fx-background-color: #4a4a4a;
+    -fx-text-fill: #ffffff;
+}
+
+.combo-csv .arrow-button {
+    -fx-background-color: transparent;
+}
+
+.combo-csv .arrow {
+    -fx-background-color: #cccccc;
+}
