@@ -1,0 +1,67 @@
+/* Contenedor principal */
+.main-screen {
+    -fx-background-color: #ffffff;
+}
+
+/* Barra superior (NavBar) */
+.nav-bar {
+    -fx-background-color: #252526;
+    -fx-padding: 10px 20px;
+    -fx-border-color: #333333;
+    -fx-border-width: 0 0 1 0;
+}
+
+.nav-bar.light-theme {
+    -fx-background-color: #f3f3f3;
+    -fx-border-color: #cccccc;
+}
+
+.nav-title {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.nav-bar.light-theme .nav-title {
+    -fx-text-fill: #1e1e1e;
+}
+
+.nav-search {
+    -fx-background-color: #3c3c3c;
+    -fx-text-fill: #ffffff;
+    -fx-prompt-text-fill: #888888;
+    -fx-background-radius: 4px;
+}
+
+/* Barra lateral (SideBar) */
+.side-bar {
+    -fx-background-color: #252526;
+    -fx-padding: 10px 20px;
+    -fx-border-color: #333333;
+    -fx-border-width: 0 1 0 0;
+}
+
+/* Botones base QuickButton */
+.quick-button {
+    -fx-background-color: #333333;
+    -fx-text-fill: #ffffff;
+    -fx-cursor: hand;
+    -fx-background-radius: 4px;
+}
+
+.quick-button:hover {
+    -fx-background-color: #444444;
+}
+
+/* Botón de acción agregado en NavBar */
+.nav-action-button {
+    -fx-background-color: #007acc;
+    -fx-text-fill: #ffffff;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-background-radius: 4px;
+}
+
+.nav-action-button:hover {
+    -fx-background-color: #008be6;
+}
