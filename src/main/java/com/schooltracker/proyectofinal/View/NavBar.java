@@ -24,6 +24,7 @@ public class NavBar extends HBox {
         // --- 1. Basic HBox Setup ---
         this.setAlignment(Pos.CENTER_LEFT);
         this.setSpacing(15);
+        this.setMaxWidth(Double.MAX_VALUE);
         this.getStyleClass().add("nav-bar");
 
         // --- 2. Title Section ---
@@ -33,23 +34,14 @@ public class NavBar extends HBox {
         // --- 3. Functions ---
         this.searchField = new TextField();
         this.searchField.setPromptText("Search...");
-        this.getStyleClass().add("nav-search");
+        this.searchField.getStyleClass().add("nav-search");
         this.searchField.setPrefWidth(220);
 
-        this.weekView = new QuickButton("Week") {
-            @Override
-            protected void addAction() {}
-        };
+        this.weekView = new QuickButton("Week");
 
-        this.dayView = new QuickButton("Day") {
-            @Override
-            protected void addAction() {}
-        };
+        this.dayView = new QuickButton("Day");
 
-        this.calendarView = new QuickButton("Calendar") {
-            @Override
-            protected void addAction() {}
-        };
+        this.calendarView = new QuickButton("Calendar");
 
         // --- 4. Spacer ---
         // Pushes everything after it to the far right
@@ -61,12 +53,7 @@ public class NavBar extends HBox {
         this.actionsBox.setAlignment(Pos.CENTER);
 
         // --- 6. Theme Toggle Button ---
-        this.themeToggleButton = new QuickButton("🌙") {
-            @Override
-            protected void addAction() {
-                setOnAction(event -> toggleTheme());
-            }
-        };
+        this.themeToggleButton = new QuickButton("🌙");
 
         // --- 7. Assemble Children ---
         this.getChildren().addAll(

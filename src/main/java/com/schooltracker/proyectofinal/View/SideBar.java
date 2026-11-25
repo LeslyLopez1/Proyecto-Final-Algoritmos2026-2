@@ -15,18 +15,8 @@ public class SideBar extends VBox {
         this.setSpacing(15);
         this.getStyleClass().add("side-bar");
 
-        this.open = new QuickButton("Open") {
-            @Override
-            protected void addAction() {
-
-            }
-        };
-        this.close = new QuickButton("Close") {
-            @Override
-            protected void addAction() {
-
-            }
-        };
+        this.open = new QuickButton("Open");
+        this.close = new QuickButton("Close");
 
         this.getChildren().addAll(open, close);
 

@@ -21,6 +21,7 @@ public class MainScreen extends BorderPane {
 
     private Node buildNavBar() {
         NavBar navBar = new NavBar("Proyecto Final");
+        this.setMaxWidth(Double.MAX_VALUE);
         return navBar;
     }
 

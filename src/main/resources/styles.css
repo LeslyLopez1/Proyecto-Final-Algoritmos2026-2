@@ -1,11 +1,15 @@
 /* Contenedor principal */
 .main-screen {
     -fx-background-color: #ffffff;
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
 }
 
 /* Barra superior (NavBar) */
 .nav-bar {
     -fx-background-color: #252526;
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
     -fx-padding: 10px 20px;
     -fx-border-color: #333333;
     -fx-border-width: 0 0 1 0;
