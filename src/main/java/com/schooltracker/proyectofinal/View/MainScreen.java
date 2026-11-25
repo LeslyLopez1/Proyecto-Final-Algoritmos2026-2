@@ -7,6 +7,7 @@ import java.net.URL;
 public class MainScreen extends BorderPane {
     public MainScreen() {
         this.getStyleClass().add("main-screen");
+        applyStylesheet();
         this.setTop(buildNavBar());
         this.setLeft(buildSideBar());
     }
