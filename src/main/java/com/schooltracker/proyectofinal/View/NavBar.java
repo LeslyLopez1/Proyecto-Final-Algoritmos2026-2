@@ -22,8 +22,6 @@ public class NavBar extends HBox {
     private final BotonToggle tipoGrafoToggle;
     private final TextField searchField;
     private final HBox actionsBox;
-    private final BotonSimple weekView;
-    private final BotonSimple dayView;
 
     private boolean grafoDirigido;
 
@@ -48,9 +46,6 @@ public class NavBar extends HBox {
         this.searchField.getStyleClass().add("nav-search");
         this.searchField.setPrefWidth(220);
 
-        this.weekView = new BotonSimple("Week");
-        this.dayView = new BotonSimple("Day");
-
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
@@ -60,8 +55,7 @@ public class NavBar extends HBox {
         this.getChildren().addAll(
                 titleLabel,
                 tipoGrafoToggle,
-                dayView,
-                weekView,
+                searchField,
                 spacer,
                 actionsBox
         );

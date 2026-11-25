@@ -74,23 +74,22 @@
     -fx-background-color: #6b6b6b;
     -fx-border-color: #969696;
 }
-
-/* Botones toggle (Dirigido = :selected por defecto, coincide con los demás botones) */
+/* Botones toggle: Dirigido (:selected) y No Dirigido con colores exactos invertidos */
 .boton-toggle {
-    -fx-background-color: #7a7a7a;
-    -fx-text-fill: #141414;
+    -fx-background-color: #e6e6e6;
+    -fx-text-fill: #333333;
     -fx-cursor: hand;
     -fx-background-radius: 4px;
     -fx-font-weight: bold;
-    -fx-border-color: #bdbdbd;
+    -fx-border-color: #333333;
     -fx-border-radius: 4px;
     -fx-border-width: 1px;
 }
 
 .boton-toggle:hover {
-    -fx-background-color: #969696;
-    -fx-text-fill: #111111;
-    -fx-border-color: #e0e0e0;
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #4a4a4a;
+    -fx-border-color: #4a4a4a;
 }
 
 .boton-toggle:selected {
