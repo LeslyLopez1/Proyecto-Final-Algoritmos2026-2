@@ -1,6 +1,5 @@
 package com.schooltracker.proyectofinal.View;
 
-import com.schooltracker.proyectofinal.View.Botones.BotonSimple;
 import com.schooltracker.proyectofinal.View.Botones.BotonToggle;
 import com.schooltracker.proyectofinal.View.Seleccion.SelectorCsvComboBox;
 import javafx.beans.value.ChangeListener;
@@ -19,14 +18,20 @@ public class NavBar extends HBox {
     private static final double ANCHO_TIPO_GRAFO = 120.0;
     private static final double ALTO_TIPO_GRAFO = 30.0;
 
+    private static final String TEXTO_GRAFO = "Grafo";
+    private static final String TEXTO_ANALISIS = "Analisis";
+    private static final double ANCHO_VISTA = 110.0;
+    private static final double ALTO_VISTA = 30.0;
+
     private final Label titleLabel;
     private final BotonToggle tipoGrafoToggle;
+    private final BotonToggle grafoAnalisis;
     private final TextField searchField;
     private final HBox actionsBox;
+    private final SelectorCsvComboBox selectorCsv;
 
     private boolean grafoDirigido;
-
-    private final SelectorCsvComboBox selectorCsv;
+    private boolean vistaGrafoActiva;
 
     public NavBar(String appTitle) {
         this.setAlignment(Pos.CENTER_LEFT);
@@ -44,6 +49,13 @@ public class NavBar extends HBox {
         });
         actualizarEstadoTipoGrafo(true);
 
+        this.grafoAnalisis = new BotonToggle(TEXTO_GRAFO);
+        this.grafoAnalisis.setFixedSize(ANCHO_VISTA, ALTO_VISTA);
+        this.grafoAnalisis.selectedProperty().addListener((obs, oldVal, isSelected) -> {
+            actualizarEstadoVista(isSelected);
+        });
+        actualizarEstadoVista(true);
+
         this.searchField = new TextField();
         this.searchField.setPromptText("Search...");
         this.searchField.getStyleClass().add("nav-search");
@@ -56,13 +68,15 @@ public class NavBar extends HBox {
         this.actionsBox.setAlignment(Pos.CENTER);
 
         this.selectorCsv = new SelectorCsvComboBox();
+
         this.getChildren().addAll(
                 titleLabel,
                 tipoGrafoToggle,
                 searchField,
                 selectorCsv,
                 spacer,
-                actionsBox
+                actionsBox,
+                grafoAnalisis
         );
     }
 
@@ -72,6 +86,14 @@ public class NavBar extends HBox {
             this.tipoGrafoToggle.setActive(esDirigido);
         }
         this.tipoGrafoToggle.setText(esDirigido ? TEXTO_DIRIGIDO : TEXTO_NO_DIRIGIDO);
+    }
+
+    private void actualizarEstadoVista(boolean esVistaGrafo) {
+        this.vistaGrafoActiva = esVistaGrafo;
+        if (this.grafoAnalisis.isActive() != esVistaGrafo) {
+            this.grafoAnalisis.setActive(esVistaGrafo);
+        }
+        this.grafoAnalisis.setText(esVistaGrafo ? TEXTO_GRAFO : TEXTO_ANALISIS);
     }
 
     public boolean isGrafoDirigido() {
@@ -84,6 +106,18 @@ public class NavBar extends HBox {
 
     public void onTipoGrafoChange(ChangeListener<Boolean> listener) {
         this.tipoGrafoToggle.selectedProperty().addListener(listener);
+    }
+
+    public boolean isVistaGrafoActiva() {
+        return this.vistaGrafoActiva;
+    }
+
+    public void setVistaGrafoActiva(boolean esVistaGrafo) {
+        actualizarEstadoVista(esVistaGrafo);
+    }
+
+    public void onVistaChange(ChangeListener<Boolean> listener) {
+        this.grafoAnalisis.selectedProperty().addListener(listener);
     }
 
     public void setTitle(String title) {
