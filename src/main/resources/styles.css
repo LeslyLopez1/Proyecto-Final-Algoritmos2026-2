@@ -135,3 +135,142 @@
 .combo-csv .arrow {
     -fx-background-color: #cccccc;
 }
+
+/* Elementos de SideBar */
+.sidebar-section-title {
+    -fx-text-fill: #e6e6e6;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.sidebar-input {
+    -fx-background-color: #3c3c3c;
+    -fx-text-fill: #ffffff;
+    -fx-prompt-text-fill: #888888;
+    -fx-background-radius: 4px;
+    -fx-border-color: #525252;
+    -fx-border-radius: 4px;
+    -fx-border-width: 1px;
+}
+
+.sidebar-input:focused {
+    -fx-border-color: #969696;
+}
+
+.sidebar-feedback {
+    -fx-text-fill: #bdbdbd;
+    -fx-font-size: 11px;
+}
+
+.sidebar-sublabel {
+    -fx-text-fill: #bdbdbd;
+    -fx-font-size: 11px;
+}
+
+.sidebar-combo {
+    -fx-background-color: #3c3c3c;
+    -fx-border-color: #525252;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-cursor: hand;
+}
+
+.sidebar-combo .list-cell {
+    -fx-background-color: #3c3c3c;
+    -fx-text-fill: #ffffff;
+}
+
+.sidebar-combo .list-cell:hover {
+    -fx-background-color: #4a4a4a;
+}
+
+.sidebar-combo .arrow-button {
+    -fx-background-color: transparent;
+}
+
+.sidebar-combo .arrow {
+    -fx-background-color: #cccccc;
+}
+
+.sidebar-recorrido {
+    -fx-background-color: #2f2f2f;
+    -fx-text-fill: #e6e6e6;
+    -fx-padding: 8px;
+    -fx-background-radius: 4px;
+    -fx-border-color: #4a4a4a;
+    -fx-border-radius: 4px;
+    -fx-border-width: 1px;
+    -fx-font-size: 12px;
+}
+
+/* Barra lateral (SideBar) */
+.side-bar {
+    -fx-background-color: #252526;
+    -fx-padding: 0;
+    -fx-border-color: #333333;
+    -fx-border-width: 0 1 0 0;
+}
+
+.sidebar-scroll {
+    -fx-background-color: transparent;
+    -fx-background: #252526;
+    -fx-border-color: transparent;
+}
+
+.sidebar-scroll > .viewport {
+    -fx-background-color: #252526;
+}
+/* ScrollPane y ScrollBar monocromáticos en SideBar */
+.sidebar-scroll {
+    -fx-background-color: transparent;
+    -fx-background: #252526;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+}
+
+.sidebar-scroll > .viewport {
+    -fx-background-color: #252526;
+}
+
+.sidebar-scroll .scroll-bar:vertical {
+    -fx-background-color: #252526;
+    -fx-pref-width: 10px;
+    -fx-padding: 2px;
+}
+
+.sidebar-scroll .scroll-bar:vertical .track {
+    -fx-background-color: #2b2b2c;
+    -fx-background-radius: 5px;
+    -fx-border-color: transparent;
+}
+
+.sidebar-scroll .scroll-bar:vertical .thumb {
+    -fx-background-color: #4a4a4a;
+    -fx-background-radius: 5px;
+}
+
+.sidebar-scroll .scroll-bar:vertical .thumb:hover {
+    -fx-background-color: #666666;
+}
+
+.sidebar-scroll .scroll-bar:vertical .thumb:pressed {
+    -fx-background-color: #7a7a7a;
+}
+
+/* Ocultar flechas superior e inferior para que se vea más limpio */
+.sidebar-scroll .scroll-bar:vertical .increment-button,
+.sidebar-scroll .scroll-bar:vertical .decrement-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+    -fx-pref-height: 0;
+}
+
+.sidebar-scroll .scroll-bar:vertical .increment-arrow,
+.sidebar-scroll .scroll-bar:vertical .decrement-arrow {
+    -fx-shape: "";
+    -fx-padding: 0;
+}
+
+.sidebar-scroll .corner {
+    -fx-background-color: #252526;
+}
