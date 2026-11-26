@@ -1,10 +1,12 @@
-
 package com.schooltracker.proyectofinal.Model;
 
+import com.schooltracker.proyectofinal.Model.Archivos.Lector;
+import java.io.IOException;
 import java.util.List;
 
 public class MainModel {
-
+    private String origenGrafoActual;
+    private final Lector lector;
     private Grafo grafoActual;
 
     public MainModel() {
@@ -12,6 +14,7 @@ public class MainModel {
     }
 
     public MainModel(boolean dirigidoPorDefecto) {
+        this.lector = new Lector();
         this.grafoActual = new Grafo(dirigidoPorDefecto);
     }
 
@@ -28,6 +31,19 @@ public class MainModel {
             throw new IllegalArgumentException("El grafo no puede ser nulo.");
         }
         this.grafoActual = nuevoGrafo;
+    }
+
+    public void cargarGrafoPeque() throws IOException {
+        cargarDesdeRecurso(Lector.RUTA_GRAFO_PEQUE, this.grafoActual.isDirigido());
+    }
+
+    public void cargarGrafoPeque(boolean dirigido) throws IOException {
+        cargarDesdeRecurso(Lector.RUTA_GRAFO_PEQUE, dirigido);
+    }
+
+    public void cargarDesdeRecurso(String rutaRecurso, boolean dirigido) throws IOException {
+        Grafo grafoCargado = lector.leerDesdeRecurso(rutaRecurso, dirigido);
+        this.grafoActual = grafoCargado;
     }
 
     public boolean isDirigido() {

@@ -274,3 +274,116 @@
 .sidebar-scroll .corner {
     -fx-background-color: #252526;
 }
+/* Vista central del grafo (GrafoView) con fondo gris claro */
+.grafo-view {
+    -fx-background-color: #d8d8d8;
+}
+
+.grafo-lienzo {
+    -fx-background-color: #d8d8d8;
+}
+
+.grafo-arista {
+    -fx-stroke: #4a4a4a;
+    -fx-stroke-width: 2px;
+}
+
+.grafo-flecha {
+    -fx-fill: #4a4a4a;
+}
+
+.grafo-peso {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-background-color: #252526;
+    -fx-background-radius: 4px;
+    -fx-border-color: #4a4a4a;
+    -fx-border-radius: 4px;
+    -fx-border-width: 1px;
+    -fx-padding: 1px 5px;
+}
+
+.grafo-nodo {
+    -fx-cursor: hand;
+}
+
+.grafo-nodo-circulo {
+    -fx-fill: #252526;
+    -fx-stroke: #4a4a4a;
+    -fx-stroke-width: 2px;
+}
+
+.grafo-nodo:hover .grafo-nodo-circulo {
+    -fx-fill: #333333;
+    -fx-stroke: #252526;
+}
+
+.grafo-nodo-etiqueta {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+/* ScrollPane y ScrollBars en tono gris claro acorde al centro */
+.grafo-scroll {
+    -fx-background-color: transparent;
+    -fx-background: #d8d8d8;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+}
+
+.grafo-scroll > .viewport {
+    -fx-background-color: #d8d8d8;
+}
+
+.grafo-scroll .scroll-bar:vertical,
+.grafo-scroll .scroll-bar:horizontal {
+    -fx-background-color: #d8d8d8;
+    -fx-padding: 2px;
+}
+
+.grafo-scroll .scroll-bar:vertical {
+    -fx-pref-width: 10px;
+}
+
+.grafo-scroll .scroll-bar:horizontal {
+    -fx-pref-height: 10px;
+}
+
+.grafo-scroll .scroll-bar .track {
+    -fx-background-color: #c8c8c8;
+    -fx-background-radius: 5px;
+    -fx-border-color: transparent;
+}
+
+.grafo-scroll .scroll-bar .thumb {
+    -fx-background-color: #8c8c8c;
+    -fx-background-radius: 5px;
+}
+
+.grafo-scroll .scroll-bar .thumb:hover {
+    -fx-background-color: #6b6b6b;
+}
+
+.grafo-scroll .scroll-bar .thumb:pressed {
+    -fx-background-color: #525252;
+}
+
+.grafo-scroll .scroll-bar .increment-button,
+.grafo-scroll .scroll-bar .decrement-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+    -fx-pref-width: 0;
+    -fx-pref-height: 0;
+}
+
+.grafo-scroll .scroll-bar .increment-arrow,
+.grafo-scroll .scroll-bar .decrement-arrow {
+    -fx-shape: "";
+    -fx-padding: 0;
+}
+
+.grafo-scroll .corner {
+    -fx-background-color: #d8d8d8;
+}

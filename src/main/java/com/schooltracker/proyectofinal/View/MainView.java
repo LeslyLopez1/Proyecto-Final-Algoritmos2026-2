@@ -1,15 +1,26 @@
 package com.schooltracker.proyectofinal.View;
-import javafx.scene.Node;
-import javafx.scene.layout.BorderPane;
 
 import java.net.URL;
+import javafx.scene.layout.BorderPane;
 
 public class MainView extends BorderPane {
+
+    private final NavBar navBar;
+    private final SideBar sideBar;
+    private GrafoView grafoView;
+
     public MainView() {
         this.getStyleClass().add("main-screen");
+        this.setMaxWidth(Double.MAX_VALUE);
         applyStylesheet();
-        this.setTop(buildNavBar());
-        this.setLeft(buildSideBar());
+
+        this.navBar = new NavBar("Proyecto Final");
+        this.sideBar = new SideBar();
+        this.grafoView = new GrafoView();
+
+        this.setTop(this.navBar);
+        this.setLeft(this.sideBar);
+        this.setCenter(this.grafoView);
     }
 
     private void applyStylesheet() {
@@ -19,16 +30,23 @@ public class MainView extends BorderPane {
         }
     }
 
-    private Node buildNavBar() {
-        NavBar navBar = new NavBar("Proyecto Final");
-        this.setMaxWidth(Double.MAX_VALUE);
+    public void actualizarGrafoView(GrafoView nuevaGrafoView) {
+        if (nuevaGrafoView == null) {
+            throw new IllegalArgumentException("GrafoView no puede ser nula.");
+        }
+        this.grafoView = nuevaGrafoView;
+        this.setCenter(this.grafoView);
+    }
+
+    public NavBar getNavBar() {
         return navBar;
     }
 
-    private Node buildSideBar() {
-        SideBar sideBar = new SideBar();
+    public SideBar getSideBar() {
         return sideBar;
     }
 
-
+    public GrafoView getGrafoView() {
+        return grafoView;
+    }
 }
