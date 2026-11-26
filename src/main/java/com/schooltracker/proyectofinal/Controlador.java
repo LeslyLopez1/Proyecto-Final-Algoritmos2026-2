@@ -23,16 +23,24 @@ public class Controlador {
         }
         this.model = model;
         this.view = view;
+        configurarEventos();
+    }
+
+    private void configurarEventos() {
+        view.getNavBar().onTipoGrafoChange((obs, oldVal, esDirigido) -> {
+            model.setDirigido(esDirigido);
+            refrescarVistaGrafo();
+        });
     }
 
     public void refrescarVistaGrafo() {
         Grafo grafo = model.getGrafoActual();
         if (grafo == null) {
-            view.actualizarGrafoView(new GrafoView(true));
+            view.actualizarGrafoView(new GrafoView(view.getNavBar().isGrafoDirigido()));
             return;
         }
 
-        boolean dirigido = grafo.isDirigido();
+        boolean dirigido = view.getNavBar().isGrafoDirigido();
         List<String> etiquetasVertices = new ArrayList<>();
         for (Vertice v : grafo.getVertices()) {
             etiquetasVertices.add(v.getEtiqueta());

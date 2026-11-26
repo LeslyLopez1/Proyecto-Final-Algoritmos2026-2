@@ -2,8 +2,10 @@ package com.schooltracker.proyectofinal.View;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -18,7 +20,7 @@ import javafx.scene.shape.Polygon;
 
 public class GrafoView extends VBox {
 
-    private static final double RADIO_NODO = 28.0;
+    private static final double RADIO_NODO = 34.0;
     private static final double ANCHO_LIENZO = 900.0;
     private static final double ALTO_LIENZO = 600.0;
     private static final double TAMANO_FLECHA = 10.0;
@@ -27,6 +29,7 @@ public class GrafoView extends VBox {
     private final Pane lienzo;
     private final ScrollPane scrollPane;
     private final Map<String, Point2D> posicionesPorEtiqueta;
+    private final Set<String> paresNoDirigidosDibujados;
 
     private boolean dirigido;
 
@@ -37,6 +40,7 @@ public class GrafoView extends VBox {
     public GrafoView(boolean dirigido) {
         this.dirigido = dirigido;
         this.posicionesPorEtiqueta = new HashMap<>();
+        this.paresNoDirigidosDibujados = new HashSet<>();
 
         this.lienzo = new Pane();
         this.lienzo.setPrefSize(ANCHO_LIENZO, ALTO_LIENZO);
@@ -61,6 +65,7 @@ public class GrafoView extends VBox {
 
     public void establecerDatos(List<String> etiquetasVertices, List<String> conexiones) {
         this.lienzo.getChildren().clear();
+        this.paresNoDirigidosDibujados.clear();
 
         List<String> vertices = (etiquetasVertices == null) ? List.of() : etiquetasVertices;
         List<String> aristas = (conexiones == null) ? List.of() : conexiones;
@@ -122,6 +127,13 @@ public class GrafoView extends VBox {
             peso = resto.substring(indiceParentesis + 2, resto.length() - 1).trim();
         }
 
+        if (!this.dirigido) {
+            String clavePar = crearClaveParNoDirigido(origen, destino);
+            if (!this.paresNoDirigidosDibujados.add(clavePar)) {
+                return;
+            }
+        }
+
         Point2D pOrigen = this.posicionesPorEtiqueta.get(origen);
         Point2D pDestino = this.posicionesPorEtiqueta.get(destino);
         if (pOrigen == null || pDestino == null) {
@@ -156,12 +168,22 @@ public class GrafoView extends VBox {
             Label etiquetaPeso = new Label(peso);
             etiquetaPeso.getStyleClass().add("grafo-peso");
 
-            double medioX = (inicioX + finX) / 2.0 - uy * 12.0;
-            double medioY = (inicioY + finY) / 2.0 + ux * 12.0;
-            etiquetaPeso.setLayoutX(medioX - 16.0);
-            etiquetaPeso.setLayoutY(medioY - 10.0);
+            double offset = this.dirigido ? 16.0 : 12.0;
+            double medioX = (inicioX + finX) / 2.0 - uy * offset;
+            double medioY = (inicioY + finY) / 2.0 + ux * offset;
+
+            etiquetaPeso.applyCss();
+            double anchoPeso = etiquetaPeso.prefWidth(-1);
+            double altoPeso = etiquetaPeso.prefHeight(-1);
+
+            etiquetaPeso.setLayoutX(medioX - anchoPeso / 2.0);
+            etiquetaPeso.setLayoutY(medioY - altoPeso / 2.0);
             this.lienzo.getChildren().add(etiquetaPeso);
         }
+    }
+
+    private String crearClaveParNoDirigido(String a, String b) {
+        return (a.compareTo(b) <= 0) ? (a + "|" + b) : (b + "|" + a);
     }
 
     private Polygon crearPuntaFlecha(double puntaX, double puntaY, double ux, double uy) {
@@ -181,9 +203,13 @@ public class GrafoView extends VBox {
         circulo.getStyleClass().add("grafo-nodo-circulo");
 
         Label texto = new Label(etiqueta);
-        texto.setWrapText(true);
+        texto.setWrapText(false);
         texto.setAlignment(Pos.CENTER);
         texto.getStyleClass().add("grafo-nodo-etiqueta");
+
+        if (etiqueta != null && etiqueta.length() >= 10) {
+            texto.setStyle("-fx-font-size: 9.5px;");
+        }
 
         StackPane nodo = new StackPane(circulo, texto);
         nodo.setPrefSize(RADIO_NODO * 2, RADIO_NODO * 2);
