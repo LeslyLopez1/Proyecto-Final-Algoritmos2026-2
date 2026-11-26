@@ -1,8 +1,11 @@
 package com.schooltracker.proyectofinal.View;
 
+import com.schooltracker.proyectofinal.View.Botones.BotonSimple;
 import com.schooltracker.proyectofinal.View.Botones.BotonToggle;
 import com.schooltracker.proyectofinal.View.Seleccion.SelectorCsvComboBox;
 import javafx.beans.value.ChangeListener;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -23,12 +26,17 @@ public class NavBar extends HBox {
     private static final double ANCHO_VISTA = 110.0;
     private static final double ALTO_VISTA = 30.0;
 
+    private static final String TEXTO_CARGAR_CSV = "Cargar CSV";
+    private static final double ANCHO_CARGAR_CSV = 110.0;
+    private static final double ALTO_CARGAR_CSV = 30.0;
+
     private final Label titleLabel;
     private final BotonToggle tipoGrafoToggle;
     private final BotonToggle grafoAnalisis;
     private final TextField searchField;
     private final HBox actionsBox;
     private final SelectorCsvComboBox selectorCsv;
+    private final BotonSimple cargarCsvButton;
 
     private boolean grafoDirigido;
     private boolean vistaGrafoActiva;
@@ -69,11 +77,15 @@ public class NavBar extends HBox {
 
         this.selectorCsv = new SelectorCsvComboBox();
 
+        this.cargarCsvButton = new BotonSimple(TEXTO_CARGAR_CSV);
+        this.cargarCsvButton.getStyleClass().add("nav-action-button");
+
         this.getChildren().addAll(
                 titleLabel,
                 tipoGrafoToggle,
                 searchField,
                 selectorCsv,
+                cargarCsvButton,
                 spacer,
                 actionsBox,
                 grafoAnalisis
@@ -143,7 +155,11 @@ public class NavBar extends HBox {
         return this.selectorCsv.getRutaRecursoSeleccionado();
     }
 
-    public void onSeleccionCsv(javafx.event.EventHandler<javafx.event.ActionEvent> handler) {
+    public void onSeleccionCsv(EventHandler<ActionEvent> handler) {
         this.selectorCsv.setOnSeleccionCambio(handler);
+    }
+
+    public void onCargarCsv(EventHandler<ActionEvent> handler) {
+        this.cargarCsvButton.setOnAction(handler);
     }
 }

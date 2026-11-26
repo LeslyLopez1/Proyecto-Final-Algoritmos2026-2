@@ -15,9 +15,6 @@ public class Aplicacion extends Application {
         MainView view = new MainView();
         Controlador controlador = new Controlador(model, view);
 
-        model.cargarGrafoPeque();
-        controlador.refrescarVistaGrafo();
-
         Scene scene = new Scene(view, 720, 480);
         stage.setTitle("Proyecto Final");
         stage.setScene(scene);

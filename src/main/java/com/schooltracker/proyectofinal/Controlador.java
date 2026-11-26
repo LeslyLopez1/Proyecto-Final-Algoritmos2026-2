@@ -1,11 +1,13 @@
 package com.schooltracker.proyectofinal;
 
+import com.schooltracker.proyectofinal.Model.Archivos.Lector;
 import com.schooltracker.proyectofinal.Model.Arista;
 import com.schooltracker.proyectofinal.Model.Grafo;
 import com.schooltracker.proyectofinal.Model.MainModel;
 import com.schooltracker.proyectofinal.Model.Vertice;
 import com.schooltracker.proyectofinal.View.GrafoView;
 import com.schooltracker.proyectofinal.View.MainView;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +33,25 @@ public class Controlador {
             model.setDirigido(esDirigido);
             refrescarVistaGrafo();
         });
+
+        view.getNavBar().onCargarCsv(event -> cargarGrafoDesdeSelector());
+    }
+
+    public void cargarGrafoDesdeSelector() {
+        String rutaSeleccionada = view.getNavBar().getRutaCsvSeleccionado();
+        boolean dirigido = view.getNavBar().isGrafoDirigido();
+
+        try {
+            if (rutaSeleccionada != null && !rutaSeleccionada.isBlank()) {
+                model.cargarDesdeRecurso(rutaSeleccionada, dirigido);
+            } else {
+                model.cargarDesdeRecurso(Lector.RUTA_GRAFO_PEQUE, dirigido);
+            }
+        } catch (IOException e) {
+            throw new IllegalStateException("No se pudo cargar el CSV seleccionado: " + rutaSeleccionada, e);
+        }
+
+        refrescarVistaGrafo();
     }
 
     public void refrescarVistaGrafo() {
