@@ -4,8 +4,8 @@ import javafx.scene.layout.BorderPane;
 
 import java.net.URL;
 
-public class MainScreen extends BorderPane {
-    public MainScreen() {
+public class MainView extends BorderPane {
+    public MainView() {
         this.getStyleClass().add("main-screen");
         applyStylesheet();
         this.setTop(buildNavBar());
