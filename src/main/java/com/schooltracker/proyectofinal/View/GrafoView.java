@@ -20,9 +20,14 @@ import javafx.scene.shape.Polygon;
 
 public class GrafoView extends VBox {
 
-    private static final double RADIO_NODO = 34.0;
-    private static final double ANCHO_LIENZO = 900.0;
-    private static final double ALTO_LIENZO = 600.0;
+    // Medidas para grafos pequeños (hasta VERTICES_TAMANO_NORMAL vértices); con más se hacen más chicos los nodos
+    private static final double RADIO_NODO_BASE = 34.0;
+    private static final double RADIO_NODO_MINIMO = 13.0;
+    private static final double ANCHO_LIENZO_BASE = 900.0;
+    private static final double ALTO_LIENZO_BASE = 600.0;
+    private static final int VERTICES_TAMANO_NORMAL = 16;
+    // Con más conexiones que esto, los pesos se ocultan porque no se alcanzarían a leer
+    private static final int MAXIMO_CONEXIONES_CON_PESO = 80;
     private static final double TAMANO_FLECHA = 10.0;
     private static final double ANGULO_FLECHA = Math.toRadians(28.0);
 
@@ -32,6 +37,10 @@ public class GrafoView extends VBox {
     private final Set<String> paresNoDirigidosDibujados;
 
     private boolean dirigido;
+    private double radioNodo = RADIO_NODO_BASE;
+    private double anchoLienzo = ANCHO_LIENZO_BASE;
+    private double altoLienzo = ALTO_LIENZO_BASE;
+    private boolean mostrarPesos = true;
 
     public GrafoView() {
         this(true);
@@ -43,8 +52,8 @@ public class GrafoView extends VBox {
         this.paresNoDirigidosDibujados = new HashSet<>();
 
         this.lienzo = new Pane();
-        this.lienzo.setPrefSize(ANCHO_LIENZO, ALTO_LIENZO);
-        this.lienzo.setMinSize(ANCHO_LIENZO, ALTO_LIENZO);
+        this.lienzo.setPrefSize(anchoLienzo, altoLienzo);
+        this.lienzo.setMinSize(anchoLienzo, altoLienzo);
         this.lienzo.getStyleClass().add("grafo-lienzo");
 
         this.scrollPane = new ScrollPane(this.lienzo);
@@ -63,6 +72,28 @@ public class GrafoView extends VBox {
         return dirigido;
     }
 
+    /** Muestra un texto en lugar del dibujo (por ejemplo, cuando el grafo es demasiado grande para dibujarlo). */
+    public void mostrarAviso(String texto) {
+        this.lienzo.getChildren().clear();
+        this.paresNoDirigidosDibujados.clear();
+        Label aviso = new Label(texto);
+        aviso.setWrapText(true);
+        aviso.setMaxWidth(anchoLienzo - 120);
+        aviso.setStyle("-fx-font-size: 15px; -fx-text-fill: #444444;");
+        aviso.setLayoutX(60);
+        aviso.setLayoutY(60);
+        this.lienzo.getChildren().add(aviso);
+    }
+
+    /** Texto pequeño en la esquina del dibujo (por ejemplo, "Mostrando 50 de 500 vértices"). */
+    public void setNota(String texto) {
+        Label nota = new Label(texto);
+        nota.setStyle("-fx-font-size: 13px; -fx-text-fill: #444444; -fx-background-color: rgba(255,255,255,0.85); -fx-padding: 4 8 4 8;");
+        nota.setLayoutX(10);
+        nota.setLayoutY(10);
+        this.lienzo.getChildren().add(nota);
+    }
+
     public void establecerDatos(List<String> etiquetasVertices, List<String> conexiones) {
         this.lienzo.getChildren().clear();
         this.paresNoDirigidosDibujados.clear();
@@ -75,6 +106,7 @@ public class GrafoView extends VBox {
             return;
         }
 
+        ajustarTamanos(vertices.size(), aristas.size());
         calcularPosiciones(vertices);
 
         for (String descripcionConexion : aristas) {
@@ -89,11 +121,38 @@ public class GrafoView extends VBox {
         }
     }
 
+    /** Con muchos vértices los nodos se hacen más chicos y el círculo más grande para que no se encimen. */
+    private void ajustarTamanos(int totalVertices, int totalConexiones) {
+        if (totalVertices <= VERTICES_TAMANO_NORMAL) {
+            radioNodo = RADIO_NODO_BASE;
+            anchoLienzo = ANCHO_LIENZO_BASE;
+            altoLienzo = ALTO_LIENZO_BASE;
+        } else {
+            radioNodo = Math.max(RADIO_NODO_MINIMO, RADIO_NODO_BASE - (totalVertices - VERTICES_TAMANO_NORMAL) * 0.6);
+            double lado = 2.0 * (radioCirculo(totalVertices) + radioNodo + 70.0);
+            anchoLienzo = Math.max(ANCHO_LIENZO_BASE, lado);
+            altoLienzo = Math.max(ALTO_LIENZO_BASE, lado);
+        }
+        mostrarPesos = totalConexiones <= MAXIMO_CONEXIONES_CON_PESO;
+        this.lienzo.setPrefSize(anchoLienzo, altoLienzo);
+        this.lienzo.setMinSize(anchoLienzo, altoLienzo);
+    }
+
+    /** Radio del círculo donde se colocan los vértices: el de siempre, o más grande si no caben. */
+    private double radioCirculo(int totalVertices) {
+        double radioBase = Math.max(120.0, Math.min(ANCHO_LIENZO_BASE, ALTO_LIENZO_BASE) / 2.0 - 90.0);
+        if (totalVertices <= VERTICES_TAMANO_NORMAL) {
+            return radioBase;
+        }
+        double radioNecesario = totalVertices * (2.0 * radioNodo + 10.0) / (2.0 * Math.PI);
+        return Math.max(radioBase, radioNecesario);
+    }
+
     private void calcularPosiciones(List<String> vertices) {
         int total = vertices.size();
-        double centroX = ANCHO_LIENZO / 2.0;
-        double centroY = ALTO_LIENZO / 2.0;
-        double radioDistribucion = Math.max(120.0, Math.min(centroX, centroY) - 90.0);
+        double centroX = anchoLienzo / 2.0;
+        double centroY = altoLienzo / 2.0;
+        double radioDistribucion = radioCirculo(total);
 
         List<String> vigentes = new ArrayList<>(vertices);
         this.posicionesPorEtiqueta.keySet().retainAll(vigentes);
@@ -150,10 +209,10 @@ public class GrafoView extends VBox {
         double ux = dx / distancia;
         double uy = dy / distancia;
 
-        double inicioX = pOrigen.getX() + ux * RADIO_NODO;
-        double inicioY = pOrigen.getY() + uy * RADIO_NODO;
-        double finX = pDestino.getX() - ux * RADIO_NODO;
-        double finY = pDestino.getY() - uy * RADIO_NODO;
+        double inicioX = pOrigen.getX() + ux * radioNodo;
+        double inicioY = pOrigen.getY() + uy * radioNodo;
+        double finX = pDestino.getX() - ux * radioNodo;
+        double finY = pDestino.getY() - uy * radioNodo;
 
         Line linea = new Line(inicioX, inicioY, finX, finY);
         linea.getStyleClass().add("grafo-arista");
@@ -164,7 +223,7 @@ public class GrafoView extends VBox {
             this.lienzo.getChildren().add(flecha);
         }
 
-        if (!peso.isEmpty()) {
+        if (mostrarPesos && !peso.isEmpty()) {
             Label etiquetaPeso = new Label(peso);
             etiquetaPeso.getStyleClass().add("grafo-peso");
 
@@ -199,7 +258,7 @@ public class GrafoView extends VBox {
     }
 
     private void dibujarNodo(String etiqueta, Point2D centro) {
-        Circle circulo = new Circle(RADIO_NODO);
+        Circle circulo = new Circle(radioNodo);
         circulo.getStyleClass().add("grafo-nodo-circulo");
 
         Label texto = new Label(etiqueta);
@@ -207,14 +266,16 @@ public class GrafoView extends VBox {
         texto.setAlignment(Pos.CENTER);
         texto.getStyleClass().add("grafo-nodo-etiqueta");
 
-        if (etiqueta != null && etiqueta.length() >= 10) {
+        if (radioNodo < 24.0) {
+            texto.setStyle("-fx-font-size: 8px;");   // nodos chicos: letra chica
+        } else if (etiqueta != null && etiqueta.length() >= 10) {
             texto.setStyle("-fx-font-size: 9.5px;");
         }
 
         StackPane nodo = new StackPane(circulo, texto);
-        nodo.setPrefSize(RADIO_NODO * 2, RADIO_NODO * 2);
-        nodo.setLayoutX(centro.getX() - RADIO_NODO);
-        nodo.setLayoutY(centro.getY() - RADIO_NODO);
+        nodo.setPrefSize(radioNodo * 2, radioNodo * 2);
+        nodo.setLayoutX(centro.getX() - radioNodo);
+        nodo.setLayoutY(centro.getY() - radioNodo);
         nodo.getStyleClass().add("grafo-nodo");
 
         this.lienzo.getChildren().add(nodo);

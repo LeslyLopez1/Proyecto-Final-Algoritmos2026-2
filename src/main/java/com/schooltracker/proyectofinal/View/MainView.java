@@ -8,6 +8,8 @@ public class MainView extends BorderPane {
     private final NavBar navBar;
     private final SideBar sideBar;
     private GrafoView grafoView;
+    private final AnalisisView analisisView;
+    private boolean mostrandoAnalisis;
 
     public MainView() {
         this.getStyleClass().add("main-screen");
@@ -17,6 +19,7 @@ public class MainView extends BorderPane {
         this.navBar = new NavBar("Proyecto Final");
         this.sideBar = new SideBar();
         this.grafoView = new GrafoView();
+        this.analisisView = new AnalisisView();
 
         this.setTop(this.navBar);
         this.setLeft(this.sideBar);
@@ -35,7 +38,20 @@ public class MainView extends BorderPane {
             throw new IllegalArgumentException("GrafoView no puede ser nula.");
         }
         this.grafoView = nuevaGrafoView;
+        if (!mostrandoAnalisis) {
+            this.setCenter(this.grafoView);
+        }
+    }
+
+    public void mostrarGrafo() {
+        this.mostrandoAnalisis = false;
         this.setCenter(this.grafoView);
+    }
+
+    public void mostrarAnalisis() {
+        this.mostrandoAnalisis = true;
+        this.setCenter(this.analisisView);
+        this.analisisView.mostrar();
     }
 
     public NavBar getNavBar() {

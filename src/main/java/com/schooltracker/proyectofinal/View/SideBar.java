@@ -2,6 +2,8 @@ package com.schooltracker.proyectofinal.View;
 
 import com.schooltracker.proyectofinal.View.Botones.BotonSimple;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -15,6 +17,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.util.StringConverter;
 
 public class SideBar extends VBox {
 
@@ -56,6 +59,9 @@ public class SideBar extends VBox {
     // Mensaje de validación / estado
     private final Label mensajeLabel;
 
+    // Nombre de cada vértice por su id, para que los combos muestren "Biblioteca" en vez de 1
+    private final Map<Integer, String> etiquetasPorId = new HashMap<>();
+
     public SideBar() {
         this.setMinWidth(SIDEBAR_WIDTH);
         this.setPrefWidth(SIDEBAR_WIDTH);
@@ -70,8 +76,8 @@ public class SideBar extends VBox {
 
         // --- Sección 1: Vértices ---
         Label tituloVertices = crearTituloSeccion("Vértices");
-        this.verticeField = crearCampoTexto("ID vértice (entero)");
-        this.nuevoVerticeField = crearCampoTexto("Nuevo ID (para modificar)");
+        this.verticeField = crearCampoTexto("Vértice (id o nombre)");
+        this.nuevoVerticeField = crearCampoTexto("Nuevo nombre (al modificar)");
 
         this.btnAgregarVertice = new BotonSimple("Agregar");
         this.btnModificarVertice = new BotonSimple("Modificar");
@@ -85,8 +91,8 @@ public class SideBar extends VBox {
 
         // --- Sección 2: Aristas ---
         Label tituloAristas = crearTituloSeccion("Aristas");
-        this.origenField = crearCampoTexto("Origen (entero)");
-        this.destinoField = crearCampoTexto("Destino (entero)");
+        this.origenField = crearCampoTexto("Origen (id o nombre)");
+        this.destinoField = crearCampoTexto("Destino (id o nombre)");
         this.pesoField = crearCampoTexto("Peso (>= 0)");
 
         this.btnAgregarArista = new BotonSimple("Agregar");
@@ -211,6 +217,20 @@ public class SideBar extends VBox {
         combo.setPromptText(prompt);
         combo.setMaxWidth(Double.MAX_VALUE);
         combo.getStyleClass().add("sidebar-combo");
+        combo.setConverter(new StringConverter<Integer>() {
+            @Override
+            public String toString(Integer id) {
+                if (id == null) {
+                    return "";
+                }
+                return etiquetasPorId.getOrDefault(id, String.valueOf(id));
+            }
+
+            @Override
+            public Integer fromString(String texto) {
+                return null;
+            }
+        });
         return combo;
     }
 
@@ -279,6 +299,13 @@ public class SideBar extends VBox {
     // ==========================================
     // Encapsulación de Búsqueda (BFS / DFS)
     // ==========================================
+
+    /** Igual que la otra versión, pero los combos muestran el nombre de cada vértice. */
+    public void setVerticesDisponibles(Map<Integer, String> etiquetas) {
+        etiquetasPorId.clear();
+        etiquetasPorId.putAll(etiquetas);
+        setVerticesDisponibles(etiquetas.keySet());
+    }
 
     public void setVerticesDisponibles(Collection<Integer> idsVertices) {
         sincronizarComboEnteros(verticeInicialCombo, idsVertices);

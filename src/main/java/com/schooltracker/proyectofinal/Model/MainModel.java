@@ -22,13 +22,8 @@ public class MainModel {
         return grafoActual;
     }
 
-    public String getOrigenGrafoActual() {
-        return origenGrafoActual;
-    }
-
     public void reiniciarGrafo(boolean dirigido) {
         this.grafoActual = new Grafo(dirigido);
-        this.origenGrafoActual = null;
     }
 
     public void establecerGrafo(Grafo nuevoGrafo) {
@@ -49,7 +44,6 @@ public class MainModel {
     public void cargarDesdeRecurso(String rutaRecurso, boolean dirigido) throws IOException {
         Grafo grafoCargado = lector.leerDesdeRecurso(rutaRecurso, dirigido);
         this.grafoActual = grafoCargado;
-        this.origenGrafoActual = rutaRecurso;
     }
 
     public boolean isDirigido() {

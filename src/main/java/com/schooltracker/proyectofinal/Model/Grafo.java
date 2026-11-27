@@ -199,6 +199,44 @@ public class Grafo {
         return Collections.unmodifiableList(ordenIndices);
     }
 
+    public void imprimirMatrizAdyacencia() {
+        int n = ordenIndices.size();
+        System.out.println("=== Matriz de Adyacencia (" + (dirigido ? "Dirigido" : "No Dirigido") + ") ===");
+        if (n == 0) {
+            System.out.println("[Grafo vacío]");
+            return;
+        }
+
+        System.out.printf("%-14s", "Origen\\Destino");
+        for (int j = 0; j < n; j++) {
+            String etiquetaCol = obtenerEtiquetaParaMatriz(ordenIndices.get(j));
+            System.out.printf("%-14s", etiquetaCol);
+        }
+        System.out.println();
+
+        for (int i = 0; i < n; i++) {
+            int idFila = ordenIndices.get(i);
+            String etiquetaFila = obtenerEtiquetaParaMatriz(idFila);
+            System.out.printf("%-14s", etiquetaFila);
+            for (int j = 0; j < n; j++) {
+                System.out.printf("%-14.1f", matrizAdyacencia[i][j]);
+            }
+            System.out.println();
+        }
+    }
+
+    private String obtenerEtiquetaParaMatriz(int id) {
+        Vertice v = vertices.get(id);
+        if (v == null) {
+            return String.valueOf(id);
+        }
+        String etiqueta = v.getEtiqueta();
+        if (etiqueta != null && !etiqueta.isBlank() && !etiqueta.equals(String.valueOf(id))) {
+            return etiqueta;
+        }
+        return String.valueOf(id);
+    }
+
     private boolean existeAristaDirecta(int origenId, int destinoId) {
         List<Arista> ady = listaAdyacencia.get(origenId);
         if (ady == null) return false;

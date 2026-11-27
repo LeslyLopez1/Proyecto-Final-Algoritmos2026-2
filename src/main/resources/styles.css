@@ -387,3 +387,13 @@
 .grafo-scroll .corner {
     -fx-background-color: #d8d8d8;
 }
+/* Vista de análisis (gráfica de tiempos) */
+.analisis-view {
+    -fx-padding: 15px;
+    -fx-background-color: #ffffff;
+}
+
+.analisis-titulo {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}

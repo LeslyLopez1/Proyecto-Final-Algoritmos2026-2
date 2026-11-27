@@ -2,132 +2,180 @@ package com.schooltracker.proyectofinal.Model.Archivos;
 
 import com.schooltracker.proyectofinal.Model.Grafo;
 import com.schooltracker.proyectofinal.Model.Vertice;
+
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+/**
+ * Lee un CSV con el formato origen,destino,peso y construye el grafo.
+ * Valida: cabecera, columnas completas, vértices vacíos, pesos numéricos no negativos,
+ * bucles (vértice con sí mismo) y conexiones duplicadas.
+ * Complejidad: O(L) para las L líneas del archivo, más lo que cueste construir el grafo.
+ */
 public class Lector {
-
     public static final String RUTA_GRAFO_PEQUE = "/CSV/grafo_peque.csv";
+
+    // Para no llenar la pantalla si el archivo tiene miles de errores
+    private static final int MAXIMO_ERRORES = 100;
+
+    // ---------------------------------------------------------------
+    // Versiones que informan TODOS los errores (las usa la interfaz)
+    // ---------------------------------------------------------------
+
+    /** Lee un archivo cualquiera del disco (con BufferedReader y FileReader). */
+    public ResultadoImportacion importarDesdeArchivo(File archivo, boolean dirigido) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new FileReader(archivo, StandardCharsets.UTF_8))) {
+            return leer(reader, dirigido);
+        }
+    }
+
+    /** Lee un CSV que viene dentro del proyecto (carpeta resources). */
+    public ResultadoImportacion importarDesdeRecurso(String rutaRecurso, boolean dirigido) throws IOException {
+        if (rutaRecurso == null || rutaRecurso.isBlank()) {
+            throw new IllegalArgumentException("La ruta del recurso CSV no puede estar vacía.");
+        }
+        InputStream inputStream = Lector.class.getResourceAsStream(rutaRecurso);
+        if (inputStream == null) {
+            throw new IOException("No se encontró el archivo CSV en recursos: " + rutaRecurso);
+        }
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+            return leer(reader, dirigido);
+        }
+    }
+
+    // ---------------------------------------------------------------
+    // Versiones que lanzan excepción con el primer error (las usa el análisis)
+    // ---------------------------------------------------------------
 
     public Grafo leerGrafoPeque(boolean dirigido) throws IOException {
         return leerDesdeRecurso(RUTA_GRAFO_PEQUE, dirigido);
     }
 
     public Grafo leerDesdeRecurso(String rutaRecurso, boolean dirigido) throws IOException {
-        if (rutaRecurso == null || rutaRecurso.isBlank()) {
-            throw new IllegalArgumentException("La ruta del recurso CSV no puede estar vacía.");
+        ResultadoImportacion resultado = importarDesdeRecurso(rutaRecurso, dirigido);
+        if (resultado.tieneErrores()) {
+            throw new IllegalArgumentException(resultado.getErrores().get(0));
         }
+        return resultado.getGrafo();
+    }
 
-        InputStream inputStream = Lector.class.getResourceAsStream(rutaRecurso);
-        if (inputStream == null) {
-            throw new IOException("No se encontró el archivo CSV en recursos: " + rutaRecurso);
-        }
+    // ---------------------------------------------------------------
+    // Lectura y validación
+    // ---------------------------------------------------------------
 
+    private ResultadoImportacion leer(BufferedReader reader, boolean dirigido) throws IOException {
         Grafo grafo = new Grafo(dirigido);
         Map<String, Integer> idsPorNombre = new HashMap<>();
+        List<String> errores = new ArrayList<>();
         int siguienteId = 1;
+        int aristasImportadas = 0;
 
-        try (BufferedReader reader = new BufferedReader(
-                new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+        boolean cabeceraLeida = false;
+        int numeroLinea = 0;
+        String linea;
 
-            String linea;
-            int numeroLinea = 0;
-            boolean cabeceraValidada = false;
+        while ((linea = reader.readLine()) != null) {
+            numeroLinea++;
+            String limpia = linea.replace("﻿", "").trim();   // ﻿: marca que Excel pone al inicio
+            if (limpia.isEmpty()) {
+                continue;
+            }
 
-            while ((linea = reader.readLine()) != null) {
-                numeroLinea++;
-                String limpia = linea.trim();
-                if (limpia.isEmpty()) {
-                    continue;
+            String[] columnas = limpia.split(",", -1);
+
+            // La primera línea con texto debe ser la cabecera
+            if (!cabeceraLeida) {
+                cabeceraLeida = true;
+                boolean cabeceraValida = columnas.length == 3
+                        && columnas[0].trim().equalsIgnoreCase("origen")
+                        && columnas[1].trim().equalsIgnoreCase("destino")
+                        && columnas[2].trim().equalsIgnoreCase("peso");
+                if (!cabeceraValida) {
+                    errores.add("Línea " + numeroLinea + ": faltan las columnas requeridas. "
+                            + "La primera fila debe ser: origen,destino,peso");
+                    break;   // sin cabecera correcta no tiene caso revisar el resto
                 }
+                continue;
+            }
 
-                String[] columnas = limpia.split(",", -1);
-                if (columnas.length != 3) {
-                    throw new IllegalArgumentException(
-                            "Formato inválido en línea " + numeroLinea + ": se esperaban 3 columnas."
-                    );
-                }
+            if (columnas.length != 3) {
+                agregarError(errores, "Línea " + numeroLinea + ": registro incompleto, se esperaban 3 columnas.");
+                continue;
+            }
 
-                String col0 = columnas[0].trim();
-                String col1 = columnas[1].trim();
-                String col2 = columnas[2].trim();
+            String origen = columnas[0].trim();
+            String destino = columnas[1].trim();
+            String textoPeso = columnas[2].trim();
 
-                if (!cabeceraValidada) {
-                    cabeceraValidada = true;
-                    if (col0.equalsIgnoreCase("origen")
-                            && col1.equalsIgnoreCase("destino")
-                            && col2.equalsIgnoreCase("peso")) {
-                        continue;
-                    }
-                }
+            if (origen.isEmpty() || destino.isEmpty()) {
+                agregarError(errores, "Línea " + numeroLinea + ": vértice vacío.");
+                continue;
+            }
+            if (textoPeso.isEmpty()) {
+                agregarError(errores, "Línea " + numeroLinea + ": registro incompleto, falta el peso.");
+                continue;
+            }
 
-                if (col0.isEmpty() || col1.isEmpty()) {
-                    throw new IllegalArgumentException(
-                            "Vértice vacío en línea " + numeroLinea + "."
-                    );
-                }
+            double peso;
+            try {
+                peso = Double.parseDouble(textoPeso);
+            } catch (NumberFormatException e) {
+                agregarError(errores, "Línea " + numeroLinea + ": peso no numérico ('" + textoPeso + "').");
+                continue;
+            }
+            if (peso < 0 || Double.isNaN(peso) || Double.isInfinite(peso)) {
+                agregarError(errores, "Línea " + numeroLinea + ": el peso debe ser un número no negativo.");
+                continue;
+            }
+            if (origen.equals(destino)) {
+                agregarError(errores, "Línea " + numeroLinea + ": conexión de '" + origen + "' consigo mismo (no permitida).");
+                continue;
+            }
 
-                double peso;
-                try {
-                    peso = Double.parseDouble(col2);
-                } catch (NumberFormatException e) {
-                    throw new IllegalArgumentException(
-                            "Peso no numérico en línea " + numeroLinea + ": '" + col2 + "'.", e
-                    );
-                }
+            // Los vértices se identifican automáticamente por su nombre; el primero que aparece recibe el id 1
+            Integer origenId = idsPorNombre.get(origen);
+            if (origenId == null) {
+                origenId = siguienteId++;
+                idsPorNombre.put(origen, origenId);
+                grafo.agregarVertice(new Vertice(origenId, origen));
+            }
+            Integer destinoId = idsPorNombre.get(destino);
+            if (destinoId == null) {
+                destinoId = siguienteId++;
+                idsPorNombre.put(destino, destinoId);
+                grafo.agregarVertice(new Vertice(destinoId, destino));
+            }
 
-                if (peso < 0 || Double.isNaN(peso) || Double.isInfinite(peso)) {
-                    throw new IllegalArgumentException(
-                            "El peso debe ser un número no negativo en línea " + numeroLinea + "."
-                    );
-                }
-
-                int origenId = obtenerORegistrarVertice(grafo, idsPorNombre, col0, siguienteId);
-                if (idsPorNombre.get(col0) == siguienteId) {
-                    siguienteId++;
-                }
-
-                int destinoId = obtenerORegistrarVertice(grafo, idsPorNombre, col1, siguienteId);
-                if (idsPorNombre.get(col1) == siguienteId) {
-                    siguienteId++;
-                }
-
-                if (origenId == destinoId) {
-                    throw new IllegalArgumentException(
-                            "Auto-bucle no permitido en línea " + numeroLinea + ": '" + col0 + "'."
-                    );
-                }
-
-                boolean agregada = grafo.agregarArista(origenId, destinoId, peso);
-                if (!agregada) {
-                    throw new IllegalArgumentException(
-                            "Arista duplicada o inválida en línea " + numeroLinea + ": "
-                                    + col0 + " -> " + col1
-                    );
-                }
+            if (grafo.agregarArista(origenId, destinoId, peso)) {
+                aristasImportadas++;
+            } else {
+                agregarError(errores, "Línea " + numeroLinea + ": conexión duplicada " + origen + " -> " + destino + ".");
             }
         }
 
-        return grafo;
+        if (!cabeceraLeida) {
+            errores.add("El archivo está vacío.");
+        } else if (errores.isEmpty() && aristasImportadas == 0) {
+            errores.add("El archivo no tiene ninguna conexión.");
+        }
+
+        return new ResultadoImportacion(grafo, grafo.getVertices().size(), aristasImportadas, errores);
     }
 
-    private int obtenerORegistrarVertice(
-            Grafo grafo,
-            Map<String, Integer> idsPorNombre,
-            String nombreUbicacion,
-            int idCandidato
-    ) {
-        Integer idExistente = idsPorNombre.get(nombreUbicacion);
-        if (idExistente != null) {
-            return idExistente;
+    private void agregarError(List<String> errores, String mensaje) {
+        if (errores.size() < MAXIMO_ERRORES) {
+            errores.add(mensaje);
+        } else if (errores.size() == MAXIMO_ERRORES) {
+            errores.add("... y más errores (se muestran solo los primeros " + MAXIMO_ERRORES + ").");
         }
-        idsPorNombre.put(nombreUbicacion, idCandidato);
-        grafo.agregarVertice(new Vertice(idCandidato, nombreUbicacion));
-        return idCandidato;
     }
 }
